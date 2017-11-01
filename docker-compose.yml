@@ -1,16 +1,22 @@
 version: '3.2'
 services:
-  activemq
+  activemq:
     image: rmohr/activemq:5.14.5
     networks:
-      - jms_test
+      jms_test:
+        ipv4_address: 10.0.2.10
     ports:
       - "1883:1883"
+      - "8161:8161"
+      - "61616:61616"
   producer:
     build:
-      context: ./producer
+      context: ./producer/test-producer/
     networks:
-      - jms_test
+      jms_test:
+        ipv4_address: 10.0.2.20
+    volumes:
+      - ~/.m2:/root/.m2
 networks:
   jms_test:
     driver: bridge

@@ -1,6 +1,7 @@
 package com.example.testproducer;
 
 import com.example.testproducer.model.Request;
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
@@ -22,10 +23,22 @@ import java.util.UUID;
 public class App {
 
 
+    // from activemq introduction
+    @Bean
+    public ConnectionFactory connectionFactory(){
+        System.out.println(" ---------------- calling connectionFactory ------------------ ");
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
+        connectionFactory.setBrokerURL("tcp://10.0.2.10:61616");
+        return connectionFactory;
+    }
+
+
 	// from spring tutorial
 	@Bean
-	public JmsListenerContainerFactory<?> myFactory(ConnectionFactory connectionFactory,
+	public JmsListenerContainerFactory<?> myFactory(/*ConnectionFactory connectionFactory,*/
 													DefaultJmsListenerContainerFactoryConfigurer configurer) {
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
+        connectionFactory.setBrokerURL("tcp://10.0.2.10:61616");
 		DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
 		// This provides all boot's default to this factory, including the message converter
 		configurer.configure(factory, connectionFactory);
@@ -45,10 +58,6 @@ public class App {
 	public static void main(String[] args) {
 
 		ConfigurableApplicationContext context = SpringApplication.run(App.class, args);
-		JmsTemplate jmsTemplate = context.getBean(JmsTemplate.class);
 
-		System.out.println("sending request");
-
-		jmsTemplate.convertAndSend("requests", new Request(UUID.randomUUID().toString(), "This is some request"));
 	}
 }
