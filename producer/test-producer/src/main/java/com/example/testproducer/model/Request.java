@@ -1,16 +1,15 @@
 package com.example.testproducer.model;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 
 public class Request {
 
-    String id;
+    String _id;
 
     @NotNull
-    @Min(30)
+    @Size(min=20)
     String userId;
     @NotNull
     @Size(min=1, max=250)
@@ -23,16 +22,16 @@ public class Request {
     }
 
     public Request(String id, String request) {
-        this.id = id;
+        this._id = id;
         this.request = request;
     }
 
-    public String getId() {
-        return id;
+    public String get_Id() {
+        return _id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void set_Id(String id) {
+        this._id = id;
     }
 
     public String getRequest() {
@@ -63,7 +62,7 @@ public class Request {
     public String toString() {
         StringBuilder builder = new StringBuilder(50);
         builder.append("{");
-        builder.append("'_id': '");builder.append(getId());builder.append("',");
+        builder.append("'_id': '");builder.append(get_Id());builder.append("',");
         builder.append("'userId': '");builder.append(getUserId());builder.append("',");
         builder.append("'request': '");builder.append(getRequest());builder.append("',");
         builder.append("'tags': [");

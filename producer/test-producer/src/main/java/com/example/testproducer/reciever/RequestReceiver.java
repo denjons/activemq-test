@@ -24,7 +24,7 @@ public class RequestReceiver {
 
     @JmsListener(destination = "requests", containerFactory = "myFactory")
     public void receiveMessage(Request request) {
-        messages.add(request.getId());
+        messages.add(request.get_Id());
         System.out.println("Received <" + request + ">");
     }
 }

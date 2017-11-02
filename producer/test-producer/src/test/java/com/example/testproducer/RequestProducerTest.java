@@ -40,8 +40,8 @@ public class RequestProducerTest {
         requestReceiver.setMessages(messages);
 
         Request request = new Request();
-        for (int i = 0; i < 50; i++) {
-            request.setId(UUID.randomUUID().toString());
+        for (int i = 0; i < 10; i++) {
+            request.set_Id(UUID.randomUUID().toString());
             request.setRequest("some request "+i);
             request.setUserId(UUID.randomUUID().toString());
             ArrayList<String> tags = new ArrayList<String>();
@@ -53,7 +53,7 @@ public class RequestProducerTest {
         System.out.println("waiting one second");
         Thread.sleep(1000);
 
-        assertEquals(50, messages.size());
+        assertEquals(10, messages.size());
 
     }
 }

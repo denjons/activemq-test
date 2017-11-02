@@ -16,7 +16,6 @@ public class RequestProducer {
     JmsTemplate jmsTemplate;
 
 
-
     public void sendRequest(Request request){
         jmsTemplate.convertAndSend("requests", request);
     }

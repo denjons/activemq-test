@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -47,21 +48,73 @@ public class ProducerServiceIntegrationTest {
 
         requestReceiver.setMessages(messages);
 
-        Request request = new Request();
+        Request request;
 
-        for (int i = 0; i < 50; i++) {
-            request.setId(UUID.randomUUID().toString());
+        ArrayList<String> tags = new ArrayList<String>();
+        tags.add("Dennis");
+        for (int i = 0; i < 10; i++) {
+            request = new Request();
+            request.set_Id(UUID.randomUUID().toString());
             request.setRequest("some request "+i);
             request.setUserId(UUID.randomUUID().toString());
-            ArrayList<String> tags = new ArrayList<String>();
-            tags.add("Dennis");
             request.setTags(tags);
-            testRestTemplate.postForLocation("/add", request);
+            System.out.println("sending: "+request.toString());
+            ResponseEntity<String> reponse = testRestTemplate.postForEntity("/add", request, String.class);
+            System.out.println(" ---------- response: "+reponse.getStatusCode().value());
+            assertEquals(200, reponse.getStatusCode().value());
         }
 
         Thread.sleep(1000);
 
-        assertEquals(50, messages.size());
+        assertEquals(10, messages.size());
+
+    }
+
+
+    @Test
+    public void addInvalidRequestTest() throws InterruptedException {
+
+        requestReceiver.setMessages(messages);
+        ResponseEntity<String> reponse;
+
+        Request request = new Request();
+        request.set_Id(UUID.randomUUID().toString());
+        request.setRequest("some bad request ");
+        request.setUserId(UUID.randomUUID().toString());
+        ArrayList<String> tags = new ArrayList<String>();
+        reponse = testRestTemplate.postForEntity("/add", request, String.class);
+        assertEquals(400, reponse.getStatusCode().value());
+
+        Request request2 = new Request();
+        request.set_Id(UUID.randomUUID().toString());
+        request.setRequest("");
+        request.setUserId(UUID.randomUUID().toString());
+        tags = new ArrayList<String>();
+        tags.add("Dennis");
+        request.setTags(tags);
+        reponse = testRestTemplate.postForEntity("/add", request2, String.class);
+        assertEquals(400, reponse.getStatusCode().value());
+
+        Request request3 = new Request();
+        request.set_Id(UUID.randomUUID().toString());
+        request.setRequest("");
+        tags = new ArrayList<String>();
+        tags.add("Dennis");
+        request.setTags(tags);
+        reponse = testRestTemplate.postForEntity("/add", request3, String.class);
+        assertEquals(400, reponse.getStatusCode().value());
+
+        Request request4 = new Request();
+        request.setUserId(UUID.randomUUID().toString());
+        request.set_Id(UUID.randomUUID().toString());
+        request.setRequest("some request");
+        reponse = testRestTemplate.postForEntity("/add", request3, String.class);
+        assertEquals(400, reponse.getStatusCode().value());
+
+
+        Thread.sleep(1000);
+
+        assertEquals(0, messages.size());
 
     }
 
